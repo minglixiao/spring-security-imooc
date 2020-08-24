@@ -71,7 +71,10 @@ public abstract class AbstractValidateCodeProcessor<C extends ValidateCode> impl
      */
     private ValidateCodeType getValidateCodeType() {
         // 处理器 命名规则：ImageValidateCodeProcessor，拿到前缀即可
-        String type = StringUtils.substringBefore(getClass().getSimpleName(), ValidateCodeProcessor.class.getSimpleName());
+        String simpleName = getClass().getSimpleName();
+        String simpleName1 = ValidateCodeProcessor.class.getSimpleName();
+
+        String type = StringUtils.substringBefore(getClass().getSimpleName(), "CodeProcessor");
         return ValidateCodeType.valueOf(type.toUpperCase());
     }
 
