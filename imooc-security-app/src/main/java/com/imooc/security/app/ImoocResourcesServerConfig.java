@@ -1,5 +1,6 @@
 package com.imooc.security.app;
 
+import com.imooc.security.app.social.openid.OpenIdAuthenticationSecurityConfig;
 import com.imooc.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import com.imooc.security.core.properties.SecurityConstants;
 import com.imooc.security.core.properties.SecurityProperties;
@@ -31,10 +32,15 @@ public class ImoocResourcesServerConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler myAuthenticationSuccessHandler;
+
     @Autowired
     private AuthenticationFailureHandler myAuthenticationFailureHandler;
+
     @Autowired
     private ValidateCodeSecurityConfig validateCodeSecurityConfig;
+
+    @Autowired
+    private OpenIdAuthenticationSecurityConfig openIdAuthenticationSecurityConfig;
 
     // 有三个configure的方法，这里使用http参数的
     @Override
@@ -49,6 +55,8 @@ public class ImoocResourcesServerConfig extends WebSecurityConfigurerAdapter {
                 .apply(smsCodeAuthenticationSecurityConfigs)
                 .and()
                 .apply(imoocSocialSecurityConfig)
+                .and()
+                .apply(openIdAuthenticationSecurityConfig)
                 .and()
                 .authorizeRequests()
                 .antMatchers(

@@ -18,16 +18,7 @@ public class SmsCodeGenerator implements ValidateCodeGenerator {
 	@Override
 	public ValidateCode generate(ServletWebRequest request) {
 		String code = RandomStringUtils.randomNumeric(securityProperties.getCode().getSms().getLength());
-		System.out.println("生成的手机短信验证码："+ code +
-				"POST /authentication/mobile HTTP/1.1 \n" +
-				"Host: 127.0.0.1:8060\n" +
-				"Content-Type: application/x-www-form-urlencoded\n" +
-				"deviceId: 007\n" +
-				"Authorization: Basic aW1vb2M6aW1vb2NzZWNyZXQ=\n" +
-				"Cache-Control: no-cache\n" +
-				"Postman-Token: cf894c8c-5870-4742-ac52-d8f84d36cf1f\n" +
-				"\n" +
-				"mobile=130123456789&smsCode=838611");
+		System.out.println("生成的手机短信验证码："+ code);
 		return new ValidateCode(code, securityProperties.getCode().getSms().getExpireIn());
 	}
 
@@ -38,7 +29,4 @@ public class SmsCodeGenerator implements ValidateCodeGenerator {
 	public void setSecurityProperties(SecurityProperties securityProperties) {
 		this.securityProperties = securityProperties;
 	}
-	
-	
-
 }

@@ -27,7 +27,7 @@
 
   <dependencies>
 
-    <dependency>
+   <dependency>
       <groupId>com.imooc.security</groupId>
       <artifactId>imooc-security-app</artifactId>
       <version>${imooc.security.versions}</version>

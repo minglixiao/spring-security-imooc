@@ -9,6 +9,8 @@ import org.springframework.social.security.SpringSocialConfigurer;
 public class ImoocSpringSocialConfigurer extends SpringSocialConfigurer {
 	
 	private String filterProcessesUrl;
+
+	private SocialAuthenticationFilterPostProcessor socialAuthenticationFilterPostProcessor;
 	
 	public ImoocSpringSocialConfigurer(String filterProcessesUrl) {
 		this.filterProcessesUrl = filterProcessesUrl;
@@ -23,6 +25,19 @@ public class ImoocSpringSocialConfigurer extends SpringSocialConfigurer {
 		SocialAuthenticationFilter filter = (SocialAuthenticationFilter) super.postProcess(object);
 		// 指定拦截URL以 某某 开头的请求
 		filter.setFilterProcessesUrl(filterProcessesUrl);
+		// 如果存在登录成功后处理器，就执行
+		if (socialAuthenticationFilterPostProcessor != null) {
+			socialAuthenticationFilterPostProcessor.process(filter);
+		}
 		return (T) filter;
+	}
+
+
+	public SocialAuthenticationFilterPostProcessor getSocialAuthenticationFilterPostProcessor() {
+		return socialAuthenticationFilterPostProcessor;
+	}
+
+	public void setSocialAuthenticationFilterPostProcessor(SocialAuthenticationFilterPostProcessor socialAuthenticationFilterPostProcessor) {
+		this.socialAuthenticationFilterPostProcessor = socialAuthenticationFilterPostProcessor;
 	}
 }

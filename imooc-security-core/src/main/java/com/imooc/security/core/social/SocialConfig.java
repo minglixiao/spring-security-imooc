@@ -29,9 +29,13 @@ public class SocialConfig extends SocialConfigurerAdapter {
 	@Autowired
 	private SecurityProperties securityProperties;
 
-	// 如果项目不存在ConnectionSignUp实现类，就不用注入了。
+	// 如果spring上下文不存在ConnectionSignUp实现类，就不用注入了。
 	@Autowired(required = false)
 	private ConnectionSignUp connectionSignUp;
+
+	// 如果spring上下文不存在SocialAuthenticationFilterPostProcessor实现类，就不用注入了。
+	@Autowired(required = false)
+	private SocialAuthenticationFilterPostProcessor socialAuthenticationFilterPostProcessor;
 
 	/**
 	 * 配置UsersConnectionRepository
@@ -64,6 +68,7 @@ public class SocialConfig extends SocialConfigurerAdapter {
 		ImoocSpringSocialConfigurer configurer = new ImoocSpringSocialConfigurer(filterProcessesUrl);
 		// 自定义注册页面的URL
 		configurer.signupUrl(securityProperties.getBrowser().getSignUpUrl());
+		configurer.setSocialAuthenticationFilterPostProcessor(socialAuthenticationFilterPostProcessor);
 		return configurer;
 	}
 

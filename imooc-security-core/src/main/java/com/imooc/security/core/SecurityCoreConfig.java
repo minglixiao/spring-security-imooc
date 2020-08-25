@@ -18,8 +18,6 @@ public class SecurityCoreConfig {
         /* BCryptPasswordEncoder是一个实现PasswordEncoder接口的实现类，采用BCrypt加密算法。
            如果你想采用md5加密方法，只需要实现PasswordEncoder接口，自己重写他的两个方法即可。
          */
-
-
         new DefaultTokenServices();
         return new BCryptPasswordEncoder();
     }

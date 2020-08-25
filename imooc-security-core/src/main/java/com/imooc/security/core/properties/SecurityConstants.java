@@ -43,4 +43,11 @@ public interface SecurityConstants {
 	 */
 	public static final String DEFAULT_SESSION_INVALID_URL = "/session/invalid";
 
+	/** openId登录拦截地址 */
+	String DEFAULT_LOGIN_PROCESSING_URL_OPEN_ID = "/authentication/openid";
+	/** openId字段名 */
+	String DEFAULT_PARAMETER_NAME_OPEN_ID = "openId";
+	/** providerId参数名 */
+	String DEFAULT_PARAMETER_NAME_PROVIDERID = "providerId";
+
 }
