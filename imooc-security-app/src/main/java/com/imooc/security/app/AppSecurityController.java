@@ -31,7 +31,6 @@ public class AppSecurityController {
     private AppSignUpUtils appSignUpUtils;
 
     /**
-     *
      * 返回http状态401，提醒APP要去引导用户去注册
      * @param request
      * @return
