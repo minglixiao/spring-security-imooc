@@ -3,6 +3,7 @@ package com.imooc.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.imooc.dto.User;
 import com.imooc.exception.UserNotExistException;
+import com.imooc.security.core.social.SignUpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,6 +33,9 @@ public class UserController {
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
 
+    @Autowired
+    private SignUpUtils signUpUtils;
+
     /**
      * 注册用户
      */
@@ -43,7 +47,8 @@ public class UserController {
             该方法会把providerId、providerUserId、userId等信息插入到UserConnection数据表中。
             并继续后面的流程。
          */
-        providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
+        //providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
+        signUpUtils.doPostSignUp(userId, new ServletWebRequest(request));
     }
 
     /* */

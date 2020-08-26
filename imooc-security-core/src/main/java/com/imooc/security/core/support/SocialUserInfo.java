@@ -1,4 +1,4 @@
-package com.imooc.security.browser.support;
+package com.imooc.security.core.support;
 
 /**
  * 封装服务提供商提供的用户信息，用于页面展示

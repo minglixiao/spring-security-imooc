@@ -67,7 +67,7 @@ public class ImoocResourcesServerConfig extends WebSecurityConfigurerAdapter {
                         securityProperties.getBrowser().getSignUpUrl(),
                         securityProperties.getBrowser().getSession().getSessionInvalidUrl(),
                         // securityProperties.getBrowser().getSignOutUrl(),
-                        "/user/regist"
+                        "/user/regist","/social/signUp"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

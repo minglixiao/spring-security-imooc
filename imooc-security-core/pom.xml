@@ -57,9 +57,14 @@
         </dependency>
 
         <!-- 常用的依赖 -->
-        <dependency>
+<!--        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
