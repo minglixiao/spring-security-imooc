@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -36,7 +35,7 @@ public class ImoocAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
 	@Autowired
 	private ClientDetailsService clientDetailsService;
 
-	@Qualifier("defaultAuthorizationServerTokenServices")
+	//@Qualifier("defaultAuthorizationServerTokenServices")
 	@Autowired
 	private AuthorizationServerTokenServices authorizationServerTokenServices;
 

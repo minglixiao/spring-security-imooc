@@ -1,6 +1,5 @@
 package com.imooc.security.app;
 
-import com.imooc.security.core.properties.OAuth2ClientProperties;
 import com.imooc.security.core.properties.SecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +8,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import java.util.Arrays;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 实现认证服务器。
@@ -37,10 +40,17 @@ public class ImoocAuthorizationServerConfig extends AuthorizationServerConfigure
     @Autowired
     private SecurityProperties securityProperties;
 
-    @Qualifier("redisTokenStore")
+
+    @Qualifier("jwtTokenStore")
     @Autowired
     public TokenStore tokenStore;
 
+    // 只有当使用jwt的时候才会有该对象
+    @Autowired(required = false)
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
+
+    @Autowired(required = false)
+    private TokenEnhancer jwtTokenEnhancer;
     /**
      * 端点安全性的配置
      * 就是在配置TokenEndpoint，TokenEndpoint在"6.3 Spring Security OAuth核心源码解析"已介绍
@@ -49,8 +59,23 @@ public class ImoocAuthorizationServerConfig extends AuthorizationServerConfigure
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         // 当继承AuthorizationServerConfigurerAdapter，我们需要指定这两个参数。如果不继承，会自动帮我们指定。
         endpoints.authenticationManager(authenticationManager).userDetailsService(userDetailsService);
-        // 服务重启，令牌就失效了。如果解决：使用redis、mysql...存取令牌
+        // 服务重启，令牌就失效了。如何解决：使用redis、mysql...存取令牌
         endpoints.tokenStore(tokenStore);
+        // 配置jwt
+        if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
+            TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+            List<TokenEnhancer> enhancers = new ArrayList<>();
+            enhancers.add(jwtTokenEnhancer);
+            enhancers.add(jwtAccessTokenConverter);
+            enhancerChain.setTokenEnhancers(enhancers);
+            // 一个处理链，先添加，再转换
+            endpoints
+                    .tokenEnhancer(enhancerChain)
+                    .accessTokenConverter(jwtAccessTokenConverter);
+            System.out.println("+++++"+jwtTokenEnhancer);
+            System.out.println("-----"+jwtAccessTokenConverter);
+        }
+
     }
 
     /**
@@ -60,7 +85,7 @@ public class ImoocAuthorizationServerConfig extends AuthorizationServerConfigure
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        /* 1. 不通过配置文件去配置
+        // 1. 不通过配置文件去配置
         // 第三方应用客户端信息是存在内存还是数据库。inMemory：内存。jdbc:数据库。
         // 我们项目第三方应用已确定就用inMemory，像QQ，微信的认证服务器就需要选择jdbc
         clients.inMemory()
@@ -69,15 +94,15 @@ public class ImoocAuthorizationServerConfig extends AuthorizationServerConfigure
                 // 令牌有效时间。单位：秒。0是不过期的
                 .accessTokenValiditySeconds(2*60*60)
                 // 这个客户端支持哪些授权模式
-                .authorizedGrantTypes("refresh_token","password")
+                .authorizedGrantTypes("refresh_token","password","custom")
                 // 能发出去的权限有哪些，可以理解OAuth的权限。客户端发送请求中参数scope要属于该集合中的一员
                 .scopes("all","read")
                 // 支持多个应用客户端，and()后面可以继续配置其他的应用客户端
                 .and()
-                .withClient("第二个clientId").secret("第二个clientSecret");*/
+                .withClient("第二个clientId").secret("第二个clientSecret");
 
         // 2. 重构，通过配置文件去配置
-        InMemoryClientDetailsServiceBuilder inMemory = clients.inMemory();
+      /*  InMemoryClientDetailsServiceBuilder inMemory = clients.inMemory();
         OAuth2ClientProperties[] clientsInCustom = securityProperties.getOauth2().getClients();
         for (OAuth2ClientProperties p : clientsInCustom) {
             inMemory.withClient(p.getClientId())
@@ -89,5 +114,7 @@ public class ImoocAuthorizationServerConfig extends AuthorizationServerConfigure
                     ;
         }
         logger.info(Arrays.toString(clientsInCustom));
+        */
+
     }
 }
