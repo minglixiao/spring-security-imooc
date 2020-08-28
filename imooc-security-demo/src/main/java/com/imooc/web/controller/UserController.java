@@ -3,7 +3,13 @@ package com.imooc.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.imooc.dto.User;
 import com.imooc.exception.UserNotExistException;
+import com.imooc.security.core.properties.SecurityProperties;
 import com.imooc.security.core.social.SignUpUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +25,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 @RestController
@@ -30,11 +37,39 @@ import java.util.ArrayList;
 @RequestMapping("/user")
 public class UserController {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
 
     @Autowired
     private SignUpUtils signUpUtils;
+
+    @Autowired
+    private SecurityProperties securityProperties;
+
+
+    /**
+     * @param authentication : 不包含我们扩展的jwt信息，扩展信息需要我们自己去解析。
+     *
+     */
+    @GetMapping("/me")
+    public Object getCurrentUser(Authentication authentication, HttpServletRequest request) throws UnsupportedEncodingException {
+        String authorization = request.getHeader("Authorization");
+        String token = StringUtils.substringAfter(authorization, "Bearer ");
+        logger.info("jwt token:{}", token);
+        String jwtSigningKey = securityProperties.getOauth2().getJwtSigningKey();
+        /*
+         * 生成的时候使用的是org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter源码里面把signingkey变成utf8了
+         */
+        Claims body = Jwts.parser().setSigningKey(securityProperties.getOauth2().getJwtSigningKey().getBytes("utf-8"))
+                .parseClaimsJws(token).getBody();
+        String company =  (String) body.get("company");
+        logger.info("公司名称:{}", company);
+        return authentication;
+    }
+
+
 
     /**
      * 注册用户

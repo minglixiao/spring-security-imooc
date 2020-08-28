@@ -1,8 +1,6 @@
 package com.imooc.security.core.properties;
 
-/**
- *
- */
+
 public class OAuth2Properties {
 
     private OAuth2ClientProperties[] clients = {};
