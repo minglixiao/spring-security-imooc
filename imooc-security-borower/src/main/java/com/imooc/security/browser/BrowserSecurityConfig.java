@@ -8,6 +8,7 @@ import com.imooc.security.core.validate.code.ValidateCodeSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -99,6 +100,9 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
                         // securityProperties.getBrowser().getSignOutUrl(),
                         "/user/regist", "/session/invalid")
                         .permitAll()
+                // 授权（鉴权）。指定URL需要哪些权限才能访问。一参：URL的请求方式，二参：指定的URL，*匹配任意字符（适用于URL包含请求参数的情况）
+                // hasRole：需要哪些权限才能访问。参数加上前缀ROLE_才是真正的权限
+                .antMatchers(HttpMethod.GET,"/user/*").hasRole("ADMIN")
                 // 任何请求
                 .anyRequest()
                 // 都需要身份认证

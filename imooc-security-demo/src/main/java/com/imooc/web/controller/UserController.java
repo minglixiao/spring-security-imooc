@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.imooc.dto.User;
 import com.imooc.exception.UserNotExistException;
 import com.imooc.security.core.properties.SecurityProperties;
-import com.imooc.security.core.social.SignUpUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +20,6 @@ import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -42,8 +40,8 @@ public class UserController {
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
 
-    @Autowired
-    private SignUpUtils signUpUtils;
+/*    @Autowired
+    private SignUpUtils signUpUtils;*/
 
     @Autowired
     private SecurityProperties securityProperties;
@@ -83,7 +81,7 @@ public class UserController {
             并继续后面的流程。
          */
         //providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
-        signUpUtils.doPostSignUp(userId, new ServletWebRequest(request));
+        /*signUpUtils.doPostSignUp(userId, new ServletWebRequest(request));*/
     }
 
     /* */

@@ -27,17 +27,17 @@
 
   <dependencies>
 
-   <dependency>
+<!--   <dependency>
       <groupId>com.imooc.security</groupId>
       <artifactId>imooc-security-app</artifactId>
       <version>${imooc.security.versions}</version>
-    </dependency>
+    </dependency>-->
 
-<!--    <dependency>
+    <dependency>
       <groupId>com.imooc.security</groupId>
       <artifactId>imooc-security-borower</artifactId>
       <version>${imooc.security.versions}</version>
-    </dependency>-->
+    </dependency>
 
     <!-- WireMock客户端依赖  -->
     <dependency>
