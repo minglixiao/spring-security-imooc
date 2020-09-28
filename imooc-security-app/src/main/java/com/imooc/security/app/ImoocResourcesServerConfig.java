@@ -2,6 +2,7 @@ package com.imooc.security.app;
 
 import com.imooc.security.app.social.openid.OpenIdAuthenticationSecurityConfig;
 import com.imooc.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
+import com.imooc.security.core.authorize.AuthorizeConfigManager;
 import com.imooc.security.core.properties.SecurityConstants;
 import com.imooc.security.core.properties.SecurityProperties;
 import com.imooc.security.core.validate.code.ValidateCodeSecurityConfig;
@@ -42,6 +43,9 @@ public class ImoocResourcesServerConfig extends ResourceServerConfigurerAdapter 
     @Autowired
     private OpenIdAuthenticationSecurityConfig openIdAuthenticationSecurityConfig;
 
+    @Autowired
+    private AuthorizeConfigManager authorizeConfigManager;
+
     // 有三个configure的方法，这里使用http参数的
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -58,22 +62,9 @@ public class ImoocResourcesServerConfig extends ResourceServerConfigurerAdapter 
                 .and()
                 .apply(openIdAuthenticationSecurityConfig)
                 .and()
-                .authorizeRequests()
-                .antMatchers(
-                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
-                        SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-                        securityProperties.getBrowser().getLoginPage(),
-                        SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
-                        securityProperties.getBrowser().getSignUpUrl(),
-                        securityProperties.getBrowser().getSession().getSessionInvalidUrl(),
-                        // securityProperties.getBrowser().getSignOutUrl(),
-                        "/user/regist","/social/signUp"
-                ).permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
                 .csrf()
                 .disable();
+        authorizeConfigManager.config(http.authorizeRequests());
     }
 
 }

@@ -2,13 +2,12 @@ package com.imooc.security.browser;
 
 import com.imooc.security.core.authentication.AbstractChannelSecurityConfig;
 import com.imooc.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
-import com.imooc.security.core.properties.SecurityConstants;
+import com.imooc.security.core.authorize.AuthorizeConfigManager;
 import com.imooc.security.core.properties.SecurityProperties;
 import com.imooc.security.core.validate.code.ValidateCodeSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -50,6 +49,8 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
+    @Autowired
+    private AuthorizeConfigManager authorizeConfigManager;
 
     // 2. 重写configure(HttpSecurity httpSecurity)方法
     @Override
@@ -87,28 +88,8 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
                 // 删除浏览器的cookie
                 .deleteCookies("JSESSIONID")
                 .and()
-            // 指定授权配置，此处意思：任何请求都需要身份认证
-            .authorizeRequests()
-                // 自定义登录页面  步骤2： 匹配一个正则表达式，匹配成功的URL不需要身份认证
-                // 处理不同类型的请求  步骤2：设置自定义的controller方法，不需要身份认证
-                .antMatchers(
-                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
-                        SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-                        securityProperties.getBrowser().getLoginPage(),
-                        SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX+"/*",
-                        securityProperties.getBrowser().getSignUpUrl(),
-                        // securityProperties.getBrowser().getSignOutUrl(),
-                        "/user/regist", "/session/invalid")
-                        .permitAll()
-                // 授权（鉴权）。指定URL需要哪些权限才能访问。一参：URL的请求方式，二参：指定的URL，*匹配任意字符（适用于URL包含请求参数的情况）
-                // hasRole：需要哪些权限才能访问。参数加上前缀ROLE_才是真正的权限
-                .antMatchers(HttpMethod.GET,"/user/*").hasRole("ADMIN")
-                // 任何请求
-                .anyRequest()
-                // 都需要身份认证
-                .authenticated()
-                .and()
             .csrf().disable(); //关闭CSRF
+            authorizeConfigManager.config(http.authorizeRequests());
     }
 
     /**
